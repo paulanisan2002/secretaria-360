@@ -3,280 +3,472 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Prototipo navegable de Secretaría 360, ventanilla única de secretaría para estudiantes. Datos ficticios.">
 <title>Secretaría 360</title>
 <style>
   :root {
     --bg: #eef1f5; --phone: #ffffff; --ink: #1b2430; --quiet: #5d6b7a; --line: #dde3ea;
-    --accent: #2f5fd0; --accent-soft: #e6edfb; --ok: #1f8a5b; --ok-soft: #e3f4ec; --warn: #b26a00; --warn-soft: #fff1dc;
+    --accent: #2f5fd0; --on-accent: #ffffff; --accent-soft: #e6edfb;
+    --ok: #1f7a50; --ok-soft: #e3f4ec; --warn: #9a5c00; --warn-soft: #fff1dc;
+    --focus: #2f5fd0; --shadow: rgba(16, 24, 40, .12);
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #10141a; --phone: #1a2029; --ink: #e8edf3; --quiet: #9aa8b7; --line: #2c3540;
-      --accent: #7aa2ff; --accent-soft: #22304d; --ok: #5fd39c; --ok-soft: #173326; --warn: #f0b45a; --warn-soft: #3a2c14;
+      --bg: #10141a; --phone: #1a2029; --ink: #e8edf3; --quiet: #a3b0be; --line: #2f3945;
+      --accent: #8fb0ff; --on-accent: #0d1626; --accent-soft: #22304d;
+      --ok: #6fdcaa; --ok-soft: #173326; --warn: #f3bd6a; --warn-soft: #3a2c14;
+      --focus: #8fb0ff; --shadow: rgba(0, 0, 0, .4);
       color-scheme: dark;
     }
   }
   :root[data-theme="dark"] {
-    --bg: #10141a; --phone: #1a2029; --ink: #e8edf3; --quiet: #9aa8b7; --line: #2c3540;
-    --accent: #7aa2ff; --accent-soft: #22304d; --ok: #5fd39c; --ok-soft: #173326; --warn: #f0b45a; --warn-soft: #3a2c14;
+    --bg: #10141a; --phone: #1a2029; --ink: #e8edf3; --quiet: #a3b0be; --line: #2f3945;
+    --accent: #8fb0ff; --on-accent: #0d1626; --accent-soft: #22304d;
+    --ok: #6fdcaa; --ok-soft: #173326; --warn: #f3bd6a; --warn-soft: #3a2c14;
+    --focus: #8fb0ff; --shadow: rgba(0, 0, 0, .4);
     color-scheme: dark;
   }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
-  .wrap { display: flex; gap: 32px; justify-content: center; align-items: flex-start; padding-block: 24px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); flex-wrap: wrap; }
-  .phone { width: 375px; max-width: 100%; min-height: 720px; background: var(--phone); border-radius: 28px; box-shadow: 0 10px 40px rgba(0,0,0,.12); overflow: hidden; display: flex; flex-direction: column; border: 1px solid var(--line); }
-  header.bar { padding: 18px 20px 12px; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 10px; }
-  header.bar button.back { border: 0; background: none; color: var(--accent); font-size: 22px; cursor: pointer; padding: 0 6px 0 0; }
-  header.bar h1 { font-size: 17px; margin: 0; }
+  button, input, select { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+  .wrap { display: flex; gap: 32px; justify-content: center; align-items: flex-start; flex-wrap: wrap; padding-block: 24px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  .phone { position: relative; width: 375px; max-width: 100%; min-height: 720px; background: var(--phone); border: 1px solid var(--line); border-radius: 28px; box-shadow: 0 10px 40px var(--shadow); overflow: hidden; display: flex; flex-direction: column; }
+  .bar { display: flex; align-items: center; gap: 6px; min-height: 60px; padding: 10px 16px; border-bottom: 1px solid var(--line); }
+  .back { width: 40px; height: 40px; border: 0; border-radius: 10px; background: none; color: var(--accent); font-size: 26px; line-height: 1; }
+  .back:hover { background: var(--accent-soft); }
+  .bar h1 { font-size: 17px; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   main { flex: 1; padding: 18px 20px 24px; overflow-y: auto; }
+  main:focus { outline: none; }
+  h2 { font-size: 22px; line-height: 1.25; margin: 0 0 14px; text-wrap: balance; }
+  h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--quiet); margin: 22px 0 8px; }
+  p { margin: 0 0 12px; }
   .hello { color: var(--quiet); margin: 0 0 4px; }
-  h2 { font-size: 22px; margin: 0 0 16px; }
-  h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--quiet); margin: 22px 0 8px; }
-  .search { display: flex; gap: 8px; }
-  .search input { flex: 1; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--phone); color: var(--ink); font-size: 15px; }
-  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-  .chip { border: 1px solid var(--line); background: none; color: var(--ink); border-radius: 999px; padding: 6px 12px; font-size: 13px; cursor: pointer; }
-  .card { border: 1px solid var(--line); border-radius: 14px; padding: 14px; margin-bottom: 10px; background: var(--phone); }
-  button.card { width: 100%; text-align: left; color: var(--ink); font: inherit; cursor: pointer; }
-  button.card:hover, .chip:hover { border-color: var(--accent); }
-  .row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
   .muted { color: var(--quiet); font-size: 13px; }
-  .badge { font-size: 12px; padding: 3px 9px; border-radius: 999px; white-space: nowrap; font-weight: 600; }
-  .b-ok { background: var(--ok-soft); color: var(--ok); } .b-prog { background: var(--accent-soft); color: var(--accent); } .b-warn { background: var(--warn-soft); color: var(--warn); }
+  .search { display: flex; gap: 8px; }
+  .search input { flex: 1; min-width: 0; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--phone); }
+  .search button { border: 0; border-radius: 12px; padding: 0 16px; background: var(--accent); color: var(--on-accent); font-weight: 600; }
+  .hint { font-size: 13px; color: var(--warn); margin: 6px 0 0; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .chip { border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; background: none; font-size: 13px; }
+  .chip:hover, .card.tap:hover { border-color: var(--accent); }
+  .card { display: block; width: 100%; text-align: left; border: 1px solid var(--line); border-radius: 14px; padding: 14px; margin-bottom: 10px; background: var(--phone); }
+  .row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .badge { font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
+  .b-ok { background: var(--ok-soft); color: var(--ok); }
+  .b-prog { background: var(--accent-soft); color: var(--accent); }
+  .b-warn { background: var(--warn-soft); color: var(--warn); }
+  .dot { display: inline-block; margin-top: 6px; font-size: 12px; font-weight: 600; color: var(--accent); }
   .field { margin-bottom: 12px; }
-  .field label { display: block; font-size: 12px; color: var(--quiet); margin-bottom: 4px; }
-  .field .val { padding: 10px 12px; border-radius: 10px; background: var(--accent-soft); display: flex; justify-content: space-between; }
-  .field .val small { color: var(--accent); font-weight: 600; }
-  .field select, .field textarea { width: 100%; padding: 10px 12px; border-radius: 10px; border: 2px solid var(--accent); background: var(--phone); color: var(--ink); font: inherit; }
-  .primary { width: 100%; padding: 14px; border: 0; border-radius: 12px; background: var(--accent); color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 8px; }
-  .secondary { width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: none; color: var(--ink); font-size: 15px; cursor: pointer; margin-top: 8px; }
-  .note { font-size: 13px; padding: 10px 12px; border-radius: 10px; background: var(--ok-soft); color: var(--ink); margin: 10px 0; }
-  .steps { list-style: none; padding: 0; margin: 8px 0 0; }
-  .steps li { position: relative; padding: 0 0 18px 30px; }
+  .field label, .field .lbl { display: block; font-size: 12px; color: var(--quiet); margin-bottom: 4px; }
+  .val { display: flex; justify-content: space-between; gap: 8px; padding: 10px 12px; border-radius: 10px; background: var(--accent-soft); }
+  .val small { color: var(--accent); font-weight: 600; white-space: nowrap; }
+  .field select { width: 100%; padding: 10px 12px; border: 2px solid var(--accent); border-radius: 10px; background: var(--phone); }
+  .primary, .secondary { display: block; width: 100%; margin-top: 8px; border-radius: 12px; font-size: 15px; }
+  .primary { padding: 14px; border: 0; background: var(--accent); color: var(--on-accent); font-weight: 600; font-size: 16px; }
+  .primary:disabled { opacity: .45; cursor: not-allowed; }
+  .secondary { padding: 12px; border: 1px solid var(--line); background: none; }
+  .link { border: 0; background: none; padding: 4px 0; color: var(--accent); font-size: 13px; text-decoration: underline; }
+  .note { font-size: 13px; padding: 10px 12px; border-radius: 10px; background: var(--ok-soft); margin: 0 0 12px; }
+  .note.info { background: var(--accent-soft); }
+  .total { font-size: 28px; font-weight: 700; margin: 4px 0 14px; font-variant-numeric: tabular-nums; }
+  .steps { list-style: none; padding: 0; margin: 8px 0 14px; }
+  .steps li { position: relative; padding: 0 0 16px 30px; }
   .steps li::before { content: ""; position: absolute; left: 6px; top: 4px; width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--line); background: var(--phone); }
   .steps li::after { content: ""; position: absolute; left: 12px; top: 20px; bottom: 0; width: 2px; background: var(--line); }
+  .steps li:last-child { padding-bottom: 0; }
   .steps li:last-child::after { display: none; }
   .steps li.done::before { background: var(--ok); border-color: var(--ok); }
   .steps li.now::before { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
   .steps li.now strong { color: var(--accent); }
   .person { display: flex; gap: 12px; align-items: center; }
-  .avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; font-weight: 700; flex: none; }
+  .avatar { flex: none; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); font-weight: 700; }
   .msgs { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
   .msg { max-width: 82%; padding: 9px 12px; border-radius: 14px; font-size: 14px; }
-  .msg.them { background: var(--accent-soft); align-self: flex-start; }
-  .msg.me { background: var(--accent); color: var(--phone); align-self: flex-end; }
+  .msg.them { align-self: flex-start; background: var(--accent-soft); }
+  .msg.me { align-self: flex-end; background: var(--accent); color: var(--on-accent); }
+  .msg.file { font-style: italic; }
   .compose { display: flex; gap: 8px; }
-  .compose input { flex: 1; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--phone); color: var(--ink); font: inherit; }
-  .compose button { border: 0; background: var(--accent); color: #fff; border-radius: 10px; padding: 0 14px; cursor: pointer; }
+  .compose input[type="text"] { flex: 1; min-width: 0; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--phone); }
+  .compose button { border: 0; border-radius: 10px; padding: 0 14px; background: var(--accent); color: var(--on-accent); font-weight: 600; }
+  .compose .attach { background: var(--accent-soft); color: var(--accent); }
   .slots { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .slot { padding: 10px; border: 1px solid var(--line); border-radius: 10px; background: none; color: var(--ink); cursor: pointer; font: inherit; }
-  .slot.sel { border: 2px solid var(--accent); background: var(--accent-soft); }
+  .slot { padding: 10px; border: 1px solid var(--line); border-radius: 10px; background: none; font-size: 14px; }
+  .slot[aria-pressed="true"] { border: 2px solid var(--accent); background: var(--accent-soft); }
+  .stars { display: flex; gap: 6px; margin: 6px 0 4px; }
+  .stars button { flex: 1; padding: 10px 0; border: 1px solid var(--line); border-radius: 10px; background: none; font-weight: 600; }
+  .stars button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+  .human { margin-top: 22px; padding-top: 14px; border-top: 1px solid var(--line); font-size: 13px; color: var(--quiet); }
+  .toast { position: absolute; left: 16px; right: 16px; bottom: 16px; padding: 12px 14px; border-radius: 12px; background: var(--ink); color: var(--phone); font-size: 14px; box-shadow: 0 6px 20px var(--shadow); }
   .side { width: 320px; max-width: 100%; }
   .side h2 { font-size: 18px; }
-  .side p { color: var(--quiet); font-size: 14px; }
-  .side ol { padding-left: 18px; font-size: 14px; }
-  .side .tag { display: inline-block; font-size: 12px; color: var(--accent); background: var(--accent-soft); border-radius: 6px; padding: 2px 8px; margin-top: 6px; }
-  .total { font-size: 28px; font-weight: 700; margin: 4px 0 14px; }
+  .side p, .side ol { color: var(--quiet); font-size: 14px; }
+  .side ol { padding-left: 18px; }
+  .side li { margin-bottom: 4px; }
+  .tag { display: inline-block; margin-top: 4px; padding: 3px 9px; border-radius: 6px; background: var(--accent-soft); color: var(--accent); font-size: 13px; font-weight: 600; }
+  .side .secondary { width: auto; padding: 8px 14px; margin-top: 18px; }
+  @media (prefers-reduced-motion: no-preference) {
+    .toast { animation: rise .2s ease-out; }
+    @keyframes rise { from { transform: translateY(8px); opacity: 0; } to { transform: none; opacity: 1; } }
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="phone" aria-live="polite">
-    <header class="bar"><button class="back" id="back" aria-label="Volver" hidden>‹</button><h1 id="title">Secretaría 360</h1></header>
-    <main id="screen"></main>
+  <div class="phone">
+    <header class="bar">
+      <button class="back" id="back" type="button" aria-label="Volver" hidden>‹</button>
+      <h1 id="title">Secretaría 360</h1>
+    </header>
+    <main id="screen" tabindex="-1"></main>
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
   </div>
   <aside class="side">
     <h2>Prototipo · Secretaría 360</h2>
-    <p>Prototipo navegable para la prueba con estudiantes. Datos de ejemplo; nada se envía.</p>
+    <p>Prototipo navegable para la prueba con estudiantes. Todos los datos son ficticios y no se envía nada.</p>
     <ol>
-      <li>Busca «certificado para la beca» o pulsa una sugerencia.</li>
-      <li>Revisa los datos prerrellenados y paga.</li>
-      <li>Abre el trámite de convalidación para ver el seguimiento, el chat y la cita.</li>
+      <li>Busca «certificado para la beca» y pide el certificado.</li>
+      <li>Revisa los datos ya rellenos, paga y valora el servicio.</li>
+      <li>Abre la convalidación en curso: responde a la gestora, adjunta la guía docente y pide cita.</li>
+      <li>Pide una convalidación nueva y comprueba que aparece aparte.</li>
     </ol>
-    <p>Principio que se está probando en cada pantalla:</p>
+    <p>Principio que se está probando en esta pantalla:</p>
     <div id="principle" class="tag"></div>
+    <div><button class="secondary" id="reset" type="button">Reiniciar demo</button></div>
   </aside>
 </div>
 <script>
-const screen = document.getElementById('screen');
-const titleEl = document.getElementById('title');
-const backBtn = document.getElementById('back');
-const principleEl = document.getElementById('principle');
-const history = [];
+const $ = id => document.getElementById(id);
+const screenEl = $('screen');
+const titleEl = $('title');
+const backBtn = $('back');
+const principleEl = $('principle');
+const toastEl = $('toast');
 
-const state = {
-  tramites: [
-    { id: 'conv', nombre: 'Convalidación de asignatura Erasmus', via: 'Vía experta', estado: 'En revisión', badge: 'b-prog', paso: 2 },
-    { id: 'mat', nombre: 'Modificación de matrícula', via: 'Vía estándar', estado: 'Resuelto', badge: 'b-ok', paso: 4 }
-  ],
-  slot: null,
-  msgs: [
-    { who: 'them', text: 'Hola, Lucía. Soy Marta y llevo tu convalidación de principio a fin.' },
-    { who: 'them', text: 'Me falta la guía docente de la asignatura de Erasmus. ¿Puedes subirla aquí?' }
-  ]
+const PASOS = {
+  'Vía automática': ['Solicitado', 'Generado', 'Documento disponible'],
+  'Vía estándar': ['Enviado', 'Asignado a gestor/a', 'En revisión', 'Resuelto'],
+  'Vía experta': ['Enviado', 'Asignado a gestor/a', 'En revisión', 'Resuelto', 'Documento disponible']
 };
 
-const catalogo = [
-  { id: 'cert', nombre: 'Certificado académico', via: 'Vía automática', tasa: 27.5, claves: ['certificado', 'beca', 'notas', 'expediente'] },
-  { id: 'beca', nombre: 'Solicitud de beca de la universidad', via: 'Vía estándar', tasa: 0, claves: ['beca', 'ayuda'] },
-  { id: 'conv', nombre: 'Convalidación de asignatura', via: 'Vía experta', tasa: 35, claves: ['convalidar', 'convalidación', 'erasmus', 'reconocimiento'] }
+const CATALOGO = [
+  { tipo: 'cert', nombre: 'Certificado académico', via: 'Vía automática', tasa: 27.5, plazo: 'Al momento',
+    claves: ['certificado', 'certificacion', 'notas', 'expediente', 'beca'] },
+  { tipo: 'beca', nombre: 'Solicitud de beca de la universidad', via: 'Vía estándar', tasa: 0, plazo: 'Unos 10 días',
+    claves: ['beca', 'ayuda', 'ayudas'] },
+  { tipo: 'conv', nombre: 'Convalidación de asignatura', via: 'Vía experta', tasa: 35, plazo: 'Unas 3 semanas',
+    claves: ['convalidar', 'convalidacion', 'reconocimiento', 'reconocer', 'erasmus', 'creditos'] }
 ];
 
-const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-const eur = n => n.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' });
+const PALABRAS_VACIAS = ['para', 'por', 'la', 'el', 'los', 'las', 'de', 'del', 'un', 'una', 'mi', 'me', 'quiero', 'necesito', 'pedir', 'solicitar', 'hacer', 'como', 'que', 'y', 'a', 'en'];
 
-function go(name, arg, push = true) {
-  if (push && current) history.push(current);
-  current = { name, arg };
-  backBtn.hidden = history.length === 0;
-  screens[name](arg);
-  screen.scrollTop = 0;
+const GESTORA = { nombre: 'Marta G.', inicial: 'M' };
+
+let state, nav, current, nextId;
+
+function initialState() {
+  nextId = 3;
+  return {
+    tramites: [
+      { id: 1, tipo: 'conv', nombre: 'Convalidación de asignatura Erasmus', via: 'Vía experta', paso: 2, gestora: true, cita: null, valoracion: null, sinLeer: 1,
+        msgs: [
+          { who: 'them', text: 'Hola, Lucía. Soy Marta y llevo tu convalidación de principio a fin.' },
+          { who: 'them', text: 'Me falta la guía docente de la asignatura de Erasmus. ¿Puedes adjuntarla aquí?' }
+        ] },
+      { id: 2, tipo: 'mat', nombre: 'Modificación de matrícula', via: 'Vía estándar', paso: 4, gestora: true, cita: null, valoracion: null, sinLeer: 0,
+        msgs: [{ who: 'them', text: 'Ya está hecho el cambio de grupo. Si necesitas algo más, escríbeme.' }] }
+    ]
+  };
 }
-let current = null;
-backBtn.onclick = () => { const prev = history.pop(); if (prev) go(prev.name, prev.arg, false); };
+
+function reset() {
+  state = initialState();
+  nav = [];
+  current = null;
+  go('inicio', null, 'root');
+}
+
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const eur = n => n.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' });
+const norm = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const tramite = id => state.tramites.find(t => t.id === id);
+const pasosDe = t => PASOS[t.via];
+const terminado = t => t.paso >= pasosDe(t).length;
+
+function estado(t) {
+  if (terminado(t)) return { txt: t.via === 'Vía automática' ? 'Listo' : 'Resuelto', cls: 'b-ok' };
+  return { txt: pasosDe(t)[t.paso], cls: 'b-prog' };
+}
+
+let toastTimer;
+function toast(msg) {
+  toastEl.textContent = msg;
+  toastEl.hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { toastEl.hidden = true; }, 3200);
+}
+
+// mode: 'push' (normal), 'replace' (no back to this step), 'root' (clear history)
+function go(name, arg = null, mode = 'push') {
+  if (mode === 'push' && current) nav.push(current);
+  if (mode === 'root') nav = [];
+  current = { name, arg };
+  backBtn.hidden = nav.length === 0;
+  screens[name](arg);
+  screenEl.scrollTop = 0;
+  screenEl.focus({ preventScroll: true });
+}
+backBtn.addEventListener('click', () => {
+  const prev = nav.pop();
+  if (!prev) return;
+  current = null;
+  go(prev.name, prev.arg, 'replace');
+});
+$('reset').addEventListener('click', () => { reset(); toast('Demo reiniciada'); });
+
+function setHeader(title, principle) {
+  titleEl.textContent = title;
+  principleEl.textContent = principle;
+}
 
 const screens = {
   inicio() {
-    titleEl.textContent = 'Secretaría 360';
-    principleEl.textContent = 'Diseñar «de fuera hacia dentro» (L2)';
-    screen.innerHTML = `
+    setHeader('Secretaría 360', 'Diseñar «de fuera hacia dentro» (L2)');
+    const lista = state.tramites.map(t => {
+      const e = estado(t);
+      const extra = t.sinLeer ? `<span class="dot">${t.sinLeer} mensaje nuevo de ${GESTORA.nombre}</span>`
+        : terminado(t) && t.valoracion === null && t.via !== 'Vía automática' ? '<span class="dot">Valora cómo ha ido</span>' : '';
+      return `<button class="card tap" type="button" data-open="${t.id}">
+          <div class="row"><strong>${esc(t.nombre)}</strong><span class="badge ${e.cls}">${esc(e.txt)}</span></div>
+          <div class="muted">${esc(t.via)}</div>${extra}
+        </button>`;
+    }).join('');
+    screenEl.innerHTML = `
       <p class="hello">Hola, Lucía</p>
       <h2>¿Qué necesitas hacer?</h2>
-      <form class="search" id="f"><input id="q" placeholder="p. ej. certificado para la beca" aria-label="Buscar trámite"></form>
+      <form class="search" id="f" role="search">
+        <input id="q" type="search" placeholder="Ej.: certificado, beca…" aria-label="Describe lo que necesitas" autocomplete="off">
+        <button type="submit">Buscar</button>
+      </form>
+      <p class="hint" id="hint" hidden>Escribe qué necesitas, por ejemplo «convalidar una asignatura».</p>
       <div class="chips">
-        <button class="chip" data-q="certificado para la beca">Certificado para la beca</button>
-        <button class="chip" data-q="convalidar Erasmus">Convalidar Erasmus</button>
+        <button class="chip" type="button" data-q="certificado para la beca">Certificado para la beca</button>
+        <button class="chip" type="button" data-q="convalidar Erasmus">Convalidar Erasmus</button>
       </div>
       <h3>Mis trámites</h3>
-      ${state.tramites.map(t => `
-        <button class="card" data-open="${t.id}">
-          <div class="row"><strong>${esc(t.nombre)}</strong><span class="badge ${t.badge}">${esc(t.estado)}</span></div>
-          <div class="muted">${esc(t.via)}</div>
-        </button>`).join('')}`;
-    const f = document.getElementById('f');
-    f.onsubmit = e => { e.preventDefault(); go('resultados', document.getElementById('q').value); };
-    screen.querySelectorAll('.chip').forEach(b => b.onclick = () => go('resultados', b.dataset.q));
-    screen.querySelectorAll('[data-open]').forEach(b => b.onclick = () => go('seguimiento', b.dataset.open));
+      ${lista}
+      <p class="human">¿Prefieres que te atienda una persona? Todos los trámites se pueden hacer también en la secretaría de tu campus o por teléfono, de mañana y de tarde.</p>`;
+    $('f').addEventListener('submit', e => {
+      e.preventDefault();
+      const q = $('q').value.trim();
+      if (!q) { $('hint').hidden = false; $('q').focus(); return; }
+      go('resultados', q);
+    });
+    screenEl.querySelectorAll('.chip').forEach(b => b.addEventListener('click', () => go('resultados', b.dataset.q)));
+    screenEl.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => go('seguimiento', Number(b.dataset.open))));
   },
 
   resultados(q) {
-    titleEl.textContent = 'Te proponemos';
-    principleEl.textContent = 'Versiones del proceso según la demanda (L2)';
-    const words = (q || '').toLowerCase().split(/\s+/);
-    let res = catalogo.filter(c => c.claves.some(k => words.some(w => w && (k.startsWith(w) || w.startsWith(k)))));
-    if (!res.length) res = catalogo;
-    screen.innerHTML = `
-      <p class="muted">Para «${esc(q)}» no necesitas saber qué departamento lo lleva.</p>
-      ${res.map(c => `
-        <button class="card" data-t="${c.id}">
-          <div class="row"><strong>${esc(c.nombre)}</strong><span class="badge ${c.via === 'Vía automática' ? 'b-ok' : c.via === 'Vía experta' ? 'b-warn' : 'b-prog'}">${esc(c.via)}</span></div>
-          <div class="muted">${c.via === 'Vía automática' ? 'Lo tendrás en unos minutos' : c.via === 'Vía experta' ? 'Una persona revisará tu caso' : 'Te asignamos un gestor/a'} · Tasa: ${c.tasa ? eur(c.tasa) : 'gratuita'}</div>
-        </button>`).join('')}`;
-    screen.querySelectorAll('[data-t]').forEach(b => b.onclick = () => go('formulario', b.dataset.t));
+    setHeader('Te proponemos', 'Versiones del proceso según la demanda (L2)');
+    const words = norm(q).split(/[^a-z0-9]+/).filter(w => w.length > 2 && !PALABRAS_VACIAS.includes(w));
+    const res = CATALOGO.filter(c => c.claves.some(k => words.some(w => k.startsWith(w) || w.startsWith(k))));
+    const tarjeta = c => `
+      <button class="card tap" type="button" data-t="${c.tipo}">
+        <div class="row"><strong>${esc(c.nombre)}</strong><span class="badge ${c.via === 'Vía automática' ? 'b-ok' : c.via === 'Vía experta' ? 'b-warn' : 'b-prog'}">${esc(c.via)}</span></div>
+        <div class="muted">${esc(c.plazo)} · Tasa: ${c.tasa ? eur(c.tasa) : 'gratuita'}</div>
+      </button>`;
+    screenEl.innerHTML = res.length
+      ? `<p class="muted">Para «${esc(q)}» no necesitas saber qué departamento lo lleva.</p>${res.map(tarjeta).join('')}`
+      : `<div class="note info">No hemos encontrado nada para «${esc(q)}». Estos son los trámites más pedidos; si no es ninguno, escríbenos y lo resolvemos contigo.</div>${CATALOGO.map(tarjeta).join('')}`;
+    screenEl.querySelectorAll('[data-t]').forEach(b => b.addEventListener('click', () => go('formulario', b.dataset.t)));
   },
 
-  formulario(id) {
-    const c = catalogo.find(x => x.id === id);
-    titleEl.textContent = c.nombre;
-    principleEl.textContent = 'Buscar, seleccionar y confirmar en vez de teclear (L2)';
-    const known = [['Nombre', 'Lucía Martín Ruiz'], ['Documento de identidad', '•••• 4821 X'], ['Titulación', 'Grado en Administración de Empresas'], ['Curso', '2.º · 2026-27']];
-    screen.innerHTML = `
-      <div class="note">Ya tenemos 4 de tus datos. Solo revisa y elige lo que falta.</div>
-      ${known.map(([k, v]) => `<div class="field"><label>${k}</label><div class="val"><span>${v}</span><small>✓ de tu expediente</small></div></div>`).join('')}
-      <div class="field"><label>${id === 'conv' ? 'Asignatura a convalidar' : 'Para qué lo necesitas'}</label>
-        <select>${id === 'conv'
-          ? '<option>Marketing Internacional (Univ. de Lyon)</option><option>Economía Europea (Univ. de Lyon)</option>'
-          : '<option>Solicitud de beca</option><option>Prácticas en empresa</option><option>Otro</option>'}</select></div>
-      <button class="primary" id="next">${c.tasa ? 'Continuar al pago' : 'Enviar solicitud'}</button>`;
-    document.getElementById('next').onclick = () => c.tasa ? go('pago', id) : go('hecho', id);
+  formulario(tipo) {
+    const c = CATALOGO.find(x => x.tipo === tipo);
+    setHeader(c.nombre, 'Buscar, seleccionar y confirmar en vez de teclear (L2)');
+    const conocidos = [['Nombre', 'Lucía Martín Ruiz'], ['Documento de identidad', '•••• 4821 X'], ['Titulación', 'Grado en Administración de Empresas'], ['Curso', '2.º · 2026-27']];
+    const opciones = tipo === 'conv'
+      ? ['Marketing Internacional (Univ. de Lyon)', 'Economía Europea (Univ. de Lyon)']
+      : tipo === 'beca' ? ['Beca de matrícula', 'Ayuda de transporte'] : ['Solicitud de beca', 'Prácticas en empresa', 'Otro'];
+    const etiqueta = tipo === 'conv' ? 'Asignatura a convalidar' : tipo === 'beca' ? 'Tipo de ayuda' : 'Para qué lo necesitas';
+    screenEl.innerHTML = `
+      <div class="note">Ya tenemos ${conocidos.length} de tus datos. Solo revisa y elige lo que falta.</div>
+      ${conocidos.map(([k, v]) => `<div class="field"><span class="lbl">${k}</span><div class="val"><span>${esc(v)}</span><small>✓ de tu expediente</small></div></div>`).join('')}
+      <button class="link" type="button" id="fix">¿Algún dato no es correcto?</button>
+      <div class="field" style="margin-top:10px"><label for="extra">${etiqueta}</label>
+        <select id="extra">${opciones.map(o => `<option>${esc(o)}</option>`).join('')}</select></div>
+      <button class="primary" type="button" id="next">${c.tasa ? 'Continuar al pago' : 'Enviar solicitud'}</button>`;
+    $('fix').addEventListener('click', () => toast('Hemos avisado a secretaría para corregirlo. Tu solicitud puede seguir adelante.'));
+    $('next').addEventListener('click', () => {
+      const detalle = $('extra').value;
+      if (c.tasa) go('pago', { tipo, detalle });
+      else crearTramite(tipo, detalle);
+    });
   },
 
-  pago(id) {
-    const c = catalogo.find(x => x.id === id);
-    titleEl.textContent = 'Pago de la tasa';
-    principleEl.textContent = 'Menos conciliaciones y controles (L2)';
-    screen.innerHTML = `
+  pago({ tipo, detalle }) {
+    const c = CATALOGO.find(x => x.tipo === tipo);
+    setHeader('Pago de la tasa', 'Menos conciliaciones y controles (L2)');
+    screenEl.innerHTML = `
       <p class="muted">${esc(c.nombre)}</p>
       <div class="total">${eur(c.tasa)}</div>
       <div class="card"><div class="row"><span>Tarjeta guardada</span><span class="muted">•••• 0000 (ejemplo)</span></div></div>
       <div class="note">No tienes que adjuntar el justificante: el pago queda vinculado a tu trámite.</div>
-      <button class="primary" id="pay">Pagar y enviar</button>`;
-    document.getElementById('pay').onclick = () => go('hecho', id);
+      <button class="primary" type="button" id="pay">Pagar ${eur(c.tasa)} y enviar</button>`;
+    $('pay').addEventListener('click', () => crearTramite(tipo, detalle));
   },
 
   hecho(id) {
-    const c = catalogo.find(x => x.id === id);
-    titleEl.textContent = 'Enviado';
-    principleEl.textContent = 'Hacer visible el back stage (L1)';
-    if (!state.tramites.some(t => t.id === id)) {
-      state.tramites.unshift(c.via === 'Vía automática'
-        ? { id, nombre: c.nombre, via: c.via, estado: 'Listo', badge: 'b-ok', paso: 4 }
-        : { id, nombre: c.nombre, via: c.via, estado: 'Enviado', badge: 'b-prog', paso: 1 });
+    const t = tramite(id);
+    setHeader('Enviado', 'Hacer visible el back stage (L1)');
+    if (t.via === 'Vía automática') {
+      screenEl.innerHTML = `
+        <h2>Tu certificado está listo</h2>
+        <p class="muted">Firmado electrónicamente y válido para la solicitud de beca. También lo tienes en «Mis trámites».</p>
+        <button class="primary" type="button" id="dl">Descargar PDF</button>
+        ${valoracionHTML(t)}
+        <button class="secondary" type="button" id="home">Volver al inicio</button>`;
+      $('dl').addEventListener('click', e => { e.currentTarget.textContent = 'Descargado ✓ (simulado)'; e.currentTarget.disabled = true; });
+    } else {
+      screenEl.innerHTML = `
+        <h2>Solicitud enviada</h2>
+        <p class="muted">Hoy mismo te asignaremos una persona que llevará tu caso. Te avisaremos en la app y por correo en cada cambio de estado.</p>
+        <button class="primary" type="button" id="track">Ver seguimiento</button>
+        <button class="secondary" type="button" id="home">Volver al inicio</button>`;
+      $('track').addEventListener('click', () => go('seguimiento', id));
     }
-    screen.innerHTML = c.via === 'Vía automática' ? `
-      <h2>Tu certificado está listo</h2>
-      <p class="muted">Firmado electrónicamente y válido para la solicitud de beca.</p>
-      <button class="primary" id="dl">Descargar PDF</button>
-      <button class="secondary" id="home">Volver al inicio</button>` : `
-      <h2>Solicitud enviada</h2>
-      <p class="muted">Te avisaremos en cada cambio de estado. Puedes seguirla desde «Mis trámites».</p>
-      <button class="primary" id="track">Ver seguimiento</button>
-      <button class="secondary" id="home">Volver al inicio</button>`;
-    const dl = document.getElementById('dl');
-    if (dl) dl.onclick = () => { dl.textContent = 'Descargado ✓ (simulado)'; };
-    const tr = document.getElementById('track');
-    if (tr) tr.onclick = () => go('seguimiento', id);
-    document.getElementById('home').onclick = () => { history.length = 0; go('inicio', null, false); backBtn.hidden = true; };
+    activarValoracion(t);
+    $('home').addEventListener('click', () => go('inicio', null, 'root'));
   },
 
   seguimiento(id) {
-    const t = state.tramites.find(x => x.id === id);
-    titleEl.textContent = 'Seguimiento';
-    principleEl.textContent = 'Un solo responsable de principio a fin (L2)';
-    const pasos = ['Enviado', 'Asignado a gestor/a', 'En revisión', 'Resuelto', 'Documento disponible'];
-    screen.innerHTML = `
-      <p class="muted">${esc(t.via)}</p>
+    const t = tramite(id);
+    setHeader('Seguimiento', t.via === 'Vía automática' ? 'Vía automática para lo rutinario (L2)' : 'Un solo responsable de principio a fin (L2)');
+    const pasos = pasosDe(t);
+    const lis = pasos.map((p, i) => {
+      const cls = i < t.paso ? 'done' : i === t.paso ? 'now' : '';
+      const fecha = i === t.paso ? '<div class="muted">Fecha estimada: 22 de octubre</div>' : '';
+      return `<li class="${cls}"><strong>${esc(p)}</strong>${fecha}</li>`;
+    }).join('');
+    let persona = '';
+    if (t.gestora) {
+      persona = `
+        <div class="card person"><div class="avatar" aria-hidden="true">${GESTORA.inicial}</div><div><strong>${GESTORA.nombre}</strong><div class="muted">Tu gestora de caso · responde en el día</div></div></div>
+        ${t.cita ? `<div class="note info">Cita reservada: ${esc(t.cita)}</div>` : ''}
+        <button class="primary" type="button" id="chat">Escribir a ${GESTORA.nombre.split(' ')[0]}${t.sinLeer ? ` (${t.sinLeer} nuevo)` : ''}</button>
+        ${t.via === 'Vía experta' && !terminado(t) ? `<button class="secondary" type="button" id="cita">${t.cita ? 'Cambiar la cita' : 'Pedir cita (presencial o vídeo)'}</button>` : ''}`;
+    } else if (!terminado(t)) {
+      persona = '<div class="note info">Hoy te asignaremos una persona responsable. Desde ese momento podrás escribirle y, si hace falta, pedir cita.</div>';
+    } else {
+      persona = '<button class="primary" type="button" id="dl">Descargar PDF</button>';
+    }
+    screenEl.innerHTML = `
+      <p class="muted">${esc(t.via)}${t.detalle ? ' · ' + esc(t.detalle) : ''}</p>
       <h2>${esc(t.nombre)}</h2>
-      <ol class="steps">${pasos.map((p, i) => `<li class="${i < t.paso ? 'done' : i === t.paso ? 'now' : ''}"><strong>${p}</strong>${i === t.paso && t.paso < 4 ? '<div class="muted">Fecha estimada: 22 de octubre</div>' : ''}</li>`).join('')}</ol>
-      <div class="card person"><div class="avatar">M</div><div><strong>Marta G.</strong><div class="muted">Tu gestora de caso · responde en el día</div></div></div>
-      <button class="primary" id="chat">Escribir a Marta</button>
-      ${t.via === 'Vía experta' ? '<button class="secondary" id="cita">Pedir cita (presencial o vídeo)</button>' : ''}`;
-    document.getElementById('chat').onclick = () => go('chat');
-    const ci = document.getElementById('cita');
-    if (ci) ci.onclick = () => go('cita');
+      <ol class="steps">${lis}</ol>
+      ${persona}
+      ${terminado(t) ? valoracionHTML(t) : ''}`;
+    if ($('chat')) $('chat').addEventListener('click', () => go('chat', id));
+    if ($('cita')) $('cita').addEventListener('click', () => go('cita', id));
+    if ($('dl')) $('dl').addEventListener('click', e => { e.currentTarget.textContent = 'Descargado ✓ (simulado)'; e.currentTarget.disabled = true; });
+    activarValoracion(t);
   },
 
-  chat() {
-    titleEl.textContent = 'Marta G. · gestora';
-    principleEl.textContent = 'Personal con capacidad de decidir (L2)';
-    screen.innerHTML = `
-      <div class="msgs">${state.msgs.map(m => `<div class="msg ${m.who}">${esc(m.text)}</div>`).join('')}</div>
-      <form class="compose" id="c"><input id="m" placeholder="Escribe un mensaje" aria-label="Mensaje"><button>Enviar</button></form>`;
-    document.getElementById('c').onsubmit = e => {
+  chat(id) {
+    const t = tramite(id);
+    t.sinLeer = 0;
+    setHeader(`${GESTORA.nombre} · gestora`, 'Personal con capacidad de decidir (L2)');
+    screenEl.innerHTML = `
+      <p class="muted">${esc(t.nombre)}</p>
+      <div class="msgs" id="msgs" aria-live="polite">${t.msgs.map(m => `<div class="msg ${m.who}${m.file ? ' file' : ''}">${esc(m.text)}</div>`).join('')}</div>
+      <form class="compose" id="c">
+        <input type="file" id="file" hidden>
+        <button class="attach" type="button" id="att" aria-label="Adjuntar un documento">Adjuntar</button>
+        <input type="text" id="m" placeholder="Escribe un mensaje" aria-label="Mensaje" autocomplete="off">
+        <button type="submit">Enviar</button>
+      </form>`;
+    const responder = text => setTimeout(() => {
+      t.msgs.push({ who: 'them', text });
+      if (current && current.name === 'chat' && current.arg === id) go('chat', id, 'replace');
+    }, 700);
+    $('att').addEventListener('click', () => $('file').click());
+    $('file').addEventListener('change', e => {
+      const f = e.target.files[0];
+      if (!f) return;
+      t.msgs.push({ who: 'me', text: `Documento adjunto: ${f.name}`, file: true });
+      go('chat', id, 'replace');
+      responder('Recibido, gracias. Con esto ya puedo revisar tu caso.');
+    });
+    $('c').addEventListener('submit', e => {
       e.preventDefault();
-      const v = document.getElementById('m').value.trim();
+      const v = $('m').value.trim();
       if (!v) return;
-      state.msgs.push({ who: 'me', text: v });
-      state.msgs.push({ who: 'them', text: 'Recibido, gracias. Lo reviso hoy y te digo algo.' });
-      go('chat', null, false);
-    };
+      t.msgs.push({ who: 'me', text: v });
+      go('chat', id, 'replace');
+      responder('Recibido. Lo miro hoy y te contesto por aquí.');
+    });
+    $('m').focus();
   },
 
-  cita() {
-    titleEl.textContent = 'Pedir cita';
-    principleEl.textContent = 'Tiempo humano donde importa (L1 + L2)';
-    const slots = ['Mar 20 · 16:30 · vídeo', 'Mar 20 · 18:00 · presencial', 'Jue 22 · 17:00 · vídeo', 'Jue 22 · 19:00 · presencial'];
-    screen.innerHTML = `
-      <p class="muted">Horarios de tarde, compatibles con tu trabajo.</p>
-      <div class="slots">${slots.map(s => `<button class="slot ${state.slot === s ? 'sel' : ''}" data-s="${s}">${s}</button>`).join('')}</div>
-      <button class="primary" id="ok" ${state.slot ? '' : 'disabled style="opacity:.5"'}>Confirmar cita</button>`;
-    screen.querySelectorAll('[data-s]').forEach(b => b.onclick = () => { state.slot = b.dataset.s; go('cita', null, false); });
-    const ok = document.getElementById('ok');
-    ok.onclick = () => { if (state.slot) { screen.innerHTML = `<h2>Cita confirmada</h2><p class="muted">${esc(state.slot)} con Marta G. Te enviaremos un recordatorio.</p>`; } };
+  cita(id) {
+    const t = tramite(id);
+    setHeader('Pedir cita', 'Tiempo humano donde aporta valor (L1 + L2)');
+    const huecos = ['Mar 20 oct · 16:30 · vídeo', 'Mar 20 oct · 18:00 · presencial', 'Jue 22 oct · 17:00 · vídeo', 'Jue 22 oct · 19:00 · presencial'];
+    let elegido = t.cita;
+    const pintar = () => {
+      screenEl.innerHTML = `
+        <p class="muted">Horarios de tarde, compatibles con tu trabajo. La cita es con ${GESTORA.nombre}, que ya conoce tu caso.</p>
+        <div class="slots">${huecos.map(s => `<button class="slot" type="button" data-s="${esc(s)}" aria-pressed="${s === elegido}">${esc(s)}</button>`).join('')}</div>
+        <button class="primary" type="button" id="ok" ${elegido ? '' : 'disabled'}>Confirmar cita</button>`;
+      screenEl.querySelectorAll('[data-s]').forEach(b => b.addEventListener('click', () => { elegido = b.dataset.s; pintar(); }));
+      $('ok').addEventListener('click', () => {
+        t.cita = elegido;
+        nav.pop();
+        current = null;
+        go('seguimiento', id, 'replace');
+        toast(`Cita confirmada: ${elegido}. Te enviaremos un recordatorio.`);
+      });
+    };
+    pintar();
   }
 };
 
-go('inicio', null, false);
+function crearTramite(tipo, detalle) {
+  const c = CATALOGO.find(x => x.tipo === tipo);
+  const auto = c.via === 'Vía automática';
+  const t = {
+    id: nextId++, tipo, detalle, nombre: c.nombre, via: c.via,
+    paso: auto ? PASOS[c.via].length : 1, gestora: false, cita: null, valoracion: null, sinLeer: 0, msgs: []
+  };
+  state.tramites.unshift(t);
+  // Tras enviar no se puede volver al formulario ni al pago: evita pagar dos veces.
+  nav = [{ name: 'inicio', arg: null }];
+  current = null;
+  go('hecho', t.id, 'replace');
+}
+
+function valoracionHTML(t) {
+  if (t.valoracion !== null) return '<p class="muted" style="margin-top:14px">Gracias por tu valoración.</p>';
+  return `
+    <div style="margin-top:16px">
+      <p style="margin:0"><strong>¿Cómo ha ido el trámite?</strong></p>
+      <p class="muted" style="margin:0">Una sola pregunta. De 1 (muy mal) a 5 (muy bien).</p>
+      <div class="stars" role="group" aria-label="Valoración del trámite">
+        ${[1, 2, 3, 4, 5].map(n => `<button type="button" data-v="${n}" aria-pressed="false" aria-label="${n} de 5">${n}</button>`).join('')}
+      </div>
+    </div>`;
+}
+
+function activarValoracion(t) {
+  screenEl.querySelectorAll('[data-v]').forEach(b => b.addEventListener('click', () => {
+    t.valoracion = Number(b.dataset.v);
+    go(current.name, current.arg, 'replace');
+    toast('Gracias. Tu valoración nos ayuda a mejorar el servicio.');
+  }));
+}
+
+reset();
 </script>
 </body>
 </html>

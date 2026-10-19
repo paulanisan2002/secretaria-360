@@ -10,6 +10,7 @@
     --bg: #eef1f5; --phone: #ffffff; --ink: #1b2430; --quiet: #5d6b7a; --line: #dde3ea;
     --accent: #2f5fd0; --on-accent: #ffffff; --accent-soft: #e6edfb;
     --ok: #1f7a50; --ok-soft: #e3f4ec; --warn: #9a5c00; --warn-soft: #fff1dc;
+    --back: #6b4fbb; --back-soft: #efeafb;
     --focus: #2f5fd0; --shadow: rgba(16, 24, 40, .12);
   }
   @media (prefers-color-scheme: dark) {
@@ -17,6 +18,7 @@
       --bg: #10141a; --phone: #1a2029; --ink: #e8edf3; --quiet: #a3b0be; --line: #2f3945;
       --accent: #8fb0ff; --on-accent: #0d1626; --accent-soft: #22304d;
       --ok: #6fdcaa; --ok-soft: #173326; --warn: #f3bd6a; --warn-soft: #3a2c14;
+      --back: #c2b0ff; --back-soft: #2c2445;
       --focus: #8fb0ff; --shadow: rgba(0, 0, 0, .4);
       color-scheme: dark;
     }
@@ -25,6 +27,7 @@
     --bg: #10141a; --phone: #1a2029; --ink: #e8edf3; --quiet: #a3b0be; --line: #2f3945;
     --accent: #8fb0ff; --on-accent: #0d1626; --accent-soft: #22304d;
     --ok: #6fdcaa; --ok-soft: #173326; --warn: #f3bd6a; --warn-soft: #3a2c14;
+    --back: #c2b0ff; --back-soft: #2c2445;
     --focus: #8fb0ff; --shadow: rgba(0, 0, 0, .4);
     color-scheme: dark;
   }
@@ -35,10 +38,10 @@
   :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
   .wrap { display: flex; gap: 32px; justify-content: center; align-items: flex-start; flex-wrap: wrap; padding-block: 24px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
   .phone { position: relative; width: 375px; max-width: 100%; min-height: 720px; background: var(--phone); border: 1px solid var(--line); border-radius: 28px; box-shadow: 0 10px 40px var(--shadow); overflow: hidden; display: flex; flex-direction: column; }
-  .bar { display: flex; align-items: center; gap: 6px; min-height: 60px; padding: 10px 16px; border-bottom: 1px solid var(--line); }
-  .back { width: 40px; height: 40px; border: 0; border-radius: 10px; background: none; color: var(--accent); font-size: 26px; line-height: 1; }
+  .bar { display: flex; align-items: center; gap: 6px; min-height: 60px; padding: 10px 12px 10px 16px; border-bottom: 1px solid var(--line); }
+  .back { flex: none; width: 40px; height: 40px; border: 0; border-radius: 10px; background: none; color: var(--accent); font-size: 26px; line-height: 1; }
   .back:hover { background: var(--accent-soft); }
-  .bar h1 { font-size: 17px; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .bar h1 { flex: 1; min-width: 0; font-size: 17px; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   main { flex: 1; padding: 18px 20px 24px; overflow-y: auto; }
   main:focus { outline: none; }
   h2 { font-size: 22px; line-height: 1.25; margin: 0 0 14px; text-wrap: balance; }
@@ -72,6 +75,7 @@
   .link { border: 0; background: none; padding: 4px 0; color: var(--accent); font-size: 13px; text-decoration: underline; }
   .note { font-size: 13px; padding: 10px 12px; border-radius: 10px; background: var(--ok-soft); margin: 0 0 12px; }
   .note.info { background: var(--accent-soft); }
+  .note.warn { background: var(--warn-soft); }
   .total { font-size: 28px; font-weight: 700; margin: 4px 0 14px; font-variant-numeric: tabular-nums; }
   .steps { list-style: none; padding: 0; margin: 8px 0 14px; }
   .steps li { position: relative; padding: 0 0 16px 30px; }
@@ -98,18 +102,50 @@
   .slot[aria-pressed="true"] { border: 2px solid var(--accent); background: var(--accent-soft); }
   .stars { display: flex; gap: 6px; margin: 6px 0 4px; }
   .stars button { flex: 1; padding: 10px 0; border: 1px solid var(--line); border-radius: 10px; background: none; font-weight: 600; }
-  .stars button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
   .human { margin-top: 22px; padding-top: 14px; border-top: 1px solid var(--line); font-size: 13px; color: var(--quiet); }
-  .toast { position: absolute; left: 16px; right: 16px; bottom: 16px; padding: 12px 14px; border-radius: 12px; background: var(--ink); color: var(--phone); font-size: 14px; box-shadow: 0 6px 20px var(--shadow); }
-  .side { width: 320px; max-width: 100%; }
-  .side h2 { font-size: 18px; }
-  .side p, .side ol { color: var(--quiet); font-size: 14px; }
+  .aviso { display: block; width: 100%; text-align: left; padding: 12px 0; border: 0; border-bottom: 1px solid var(--line); background: none; }
+  .aviso.nuevo strong::before { content: ""; display: inline-block; width: 8px; height: 8px; margin-right: 8px; border-radius: 50%; background: var(--accent); vertical-align: middle; }
+  .tabbar { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line); background: var(--phone); }
+  .tabbar button { padding: 10px 0 12px; border: 0; background: none; font-size: 12px; font-weight: 600; color: var(--quiet); }
+  .tabbar button[aria-current="page"] { color: var(--accent); box-shadow: inset 0 2px 0 var(--accent); }
+  .tabbar .n { display: inline-grid; place-items: center; min-width: 18px; height: 18px; margin-left: 3px; padding: 0 5px; border-radius: 999px; background: var(--accent); color: var(--on-accent); font-size: 11px; }
+  .sugs { list-style: none; margin: 6px 0 0; padding: 0; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  .sugs button { display: block; width: 100%; padding: 10px 14px; border: 0; border-bottom: 1px solid var(--line); background: var(--phone); text-align: left; font-size: 14px; }
+  .sugs li:last-child button { border-bottom: 0; }
+  .sugs button:hover { background: var(--accent-soft); }
+  .toggle { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .toggle input { width: 20px; height: 20px; accent-color: var(--accent); }
+  .uso { padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+  .danger { border: 0; background: none; padding: 8px 0; color: var(--warn); font-size: 13px; text-decoration: underline; }
+  .confirm { margin-top: 10px; padding: 12px; border: 1px solid var(--warn); border-radius: 12px; background: var(--warn-soft); font-size: 14px; }
+  .confirm .row { margin-top: 8px; justify-content: flex-start; }
+  .confirm button { padding: 8px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--phone); }
+  .confirm .yes { border-color: var(--warn); color: var(--warn); font-weight: 600; }
+  .toast { position: absolute; left: 16px; right: 16px; bottom: 64px; padding: 12px 14px; border-radius: 12px; background: var(--ink); color: var(--phone); font-size: 14px; box-shadow: 0 6px 20px var(--shadow); }
+  .side { width: 340px; max-width: 100%; display: flex; flex-direction: column; gap: 18px; }
+  .side section { min-width: 0; }
+  .side h2 { font-size: 18px; margin-bottom: 6px; }
+  .side h3 { margin: 0 0 8px; }
+  .side p, .side ol { color: var(--quiet); font-size: 14px; margin: 0; }
   .side ol { padding-left: 18px; }
   .side li { margin-bottom: 4px; }
-  .tag { display: inline-block; margin-top: 4px; padding: 3px 9px; border-radius: 6px; background: var(--accent-soft); color: var(--accent); font-size: 13px; font-weight: 600; }
-  .side .secondary { width: auto; padding: 8px 14px; margin-top: 18px; }
+  .tag { display: inline-block; margin-top: 6px; padding: 3px 9px; border-radius: 6px; background: var(--accent-soft); color: var(--accent); font-size: 13px; font-weight: 600; }
+  .kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .kpi { padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--phone); }
+  .kpi b { display: block; font-size: 22px; font-variant-numeric: tabular-nums; }
+  .kpi span { font-size: 12px; color: var(--quiet); }
+  .log { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  .log li { display: grid; grid-template-columns: 92px 1fr; gap: 8px; align-items: start; font-size: 13px; }
+  .capa { padding: 2px 6px; border-radius: 6px; font-size: 11px; font-weight: 700; text-align: center; }
+  .capa.front { background: var(--accent-soft); color: var(--accent); }
+  .capa.back { background: var(--back-soft); color: var(--back); }
+  .capa.soa { background: var(--ok-soft); color: var(--ok); }
+  .tools { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tools button { padding: 8px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--phone); font-size: 14px; }
+  .tools .day { border-color: var(--back); color: var(--back); font-weight: 600; }
   @media (prefers-reduced-motion: no-preference) {
     .toast { animation: rise .2s ease-out; }
+    .log li:first-child { animation: rise .25s ease-out; }
     @keyframes rise { from { transform: translateY(8px); opacity: 0; } to { transform: none; opacity: 1; } }
   }
 </style>
@@ -122,20 +158,41 @@
       <h1 id="title">Secretaría 360</h1>
     </header>
     <main id="screen" tabindex="-1"></main>
+    <nav class="tabbar" aria-label="Secciones">
+      <button type="button" data-tab="inicio">Inicio</button>
+      <button type="button" data-tab="documentos">Documentos</button>
+      <button type="button" data-tab="avisos" id="tabAvisos">Avisos</button>
+      <button type="button" data-tab="perfil">Perfil</button>
+    </nav>
     <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
   </div>
   <aside class="side">
-    <h2>Prototipo · Secretaría 360</h2>
-    <p>Prototipo navegable para la prueba con estudiantes. Todos los datos son ficticios y no se envía nada.</p>
-    <ol>
-      <li>Busca «certificado para la beca» y pide el certificado.</li>
-      <li>Revisa los datos ya rellenos, paga y valora el servicio.</li>
-      <li>Abre la convalidación en curso: responde a la gestora, adjunta la guía docente y pide cita.</li>
-      <li>Pide una convalidación nueva y comprueba que aparece aparte.</li>
-    </ol>
-    <p>Principio que se está probando en esta pantalla:</p>
-    <div id="principle" class="tag"></div>
-    <div><button class="secondary" id="reset" type="button">Reiniciar demo</button></div>
+    <section>
+      <h2>Prototipo · Secretaría 360</h2>
+      <p>Prototipo navegable para la prueba con estudiantes. Todos los datos son ficticios y no se envía nada.</p>
+    </section>
+    <section>
+      <h3>Qué probar</h3>
+      <ol>
+        <li>Busca «certificado para la beca», pide el certificado y valóralo.</li>
+        <li>Abre la convalidación en curso y pulsa «Simular un día»: la gestora sigue esperando la guía docente.</li>
+        <li>Adjunta la guía en el chat, simula otro día y mira cómo avanza.</li>
+        <li>Pide una convalidación nueva y simula días hasta que se resuelva.</li>
+      </ol>
+      <div id="principle" class="tag"></div>
+    </section>
+    <section>
+      <h3>Indicadores en vivo (Tabla 5 del informe)</h3>
+      <div class="kpis" id="kpis"></div>
+    </section>
+    <section>
+      <h3>Detrás de la pantalla</h3>
+      <ul class="log" id="log" aria-live="polite"></ul>
+    </section>
+    <div class="tools">
+      <button class="day" id="day" type="button">Simular un día</button>
+      <button id="reset" type="button">Reiniciar demo</button>
+    </div>
   </aside>
 </div>
 <script>
@@ -143,6 +200,7 @@ const $ = id => document.getElementById(id);
 const screenEl = $('screen');
 const titleEl = $('title');
 const backBtn = $('back');
+const tabAvisos = $('tabAvisos');
 const principleEl = $('principle');
 const toastEl = $('toast');
 
@@ -162,21 +220,37 @@ const CATALOGO = [
 ];
 
 const PALABRAS_VACIAS = ['para', 'por', 'la', 'el', 'los', 'las', 'de', 'del', 'un', 'una', 'mi', 'me', 'quiero', 'necesito', 'pedir', 'solicitar', 'hacer', 'como', 'que', 'y', 'a', 'en'];
-
+const DATOS_EXPEDIENTE = [['Nombre', 'Lucía Martín Ruiz'], ['Documento de identidad', '•••• 4821 X'], ['Titulación', 'Grado en Administración de Empresas'], ['Curso', '2.º · 2026-27']];
 const GESTORA = { nombre: 'Marta G.', inicial: 'M' };
+const CAPAS = { front: 'Front stage', back: 'Back stage', soa: 'Servicio SOA' };
+const PLAZO_DIAS = { 'Vía estándar': 10, 'Vía experta': 21 };
+const HOY = new Date(2026, 9, 19);
+const TABS = ['inicio', 'documentos', 'avisos', 'perfil'];
 
-let state, nav, current, nextId;
+let state, nav, current;
+
+// Fecha del día n de la demo (0 = hoy); «Simular un día» avanza state.dia.
+const fechaEn = dias => new Date(HOY.getTime() + dias * 864e5).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' });
 
 function initialState() {
-  nextId = 3;
   return {
+    nextId: 3,
+    dia: 0,
+    reutilizados: 0,
+    tecleados: 0,
+    log: [],
+    prefs: { app: true, correo: true, sms: false },
+    usos: [{ quien: 'Secretaría · modificación de matrícula', para: 'Cambiar tu grupo de prácticas', cuando: '2 de octubre' }],
+    documentos: [{ nombre: 'Resguardo de matrícula 2026-27', fecha: '15 de septiembre' }, { nombre: 'Resolución de modificación de matrícula', fecha: '2 de octubre' }],
+    avisos: [{ txt: 'Marta G. te ha escrito sobre tu convalidación Erasmus.', tramite: 1, leido: false }],
     tramites: [
       { id: 1, tipo: 'conv', nombre: 'Convalidación de asignatura Erasmus', via: 'Vía experta', paso: 2, gestora: true, cita: null, valoracion: null, sinLeer: 1,
+        faltaDoc: true, fechaDias: 3,
         msgs: [
           { who: 'them', text: 'Hola, Lucía. Soy Marta y llevo tu convalidación de principio a fin.' },
           { who: 'them', text: 'Me falta la guía docente de la asignatura de Erasmus. ¿Puedes adjuntarla aquí?' }
         ] },
-      { id: 2, tipo: 'mat', nombre: 'Modificación de matrícula', via: 'Vía estándar', paso: 4, gestora: true, cita: null, valoracion: null, sinLeer: 0,
+      { id: 2, tipo: 'mat', nombre: 'Modificación de matrícula', via: 'Vía estándar', paso: 4, gestora: true, cita: null, valoracion: null, sinLeer: 0, faltaDoc: false,
         msgs: [{ who: 'them', text: 'Ya está hecho el cambio de grupo. Si necesitas algo más, escríbeme.' }] }
     ]
   };
@@ -186,6 +260,7 @@ function reset() {
   state = initialState();
   nav = [];
   current = null;
+  registrar('soa', 'Identidad + expediente: sesión iniciada con la cuenta de la universidad.');
   go('inicio', null, 'root');
 }
 
@@ -196,9 +271,46 @@ const tramite = id => state.tramites.find(t => t.id === id);
 const pasosDe = t => PASOS[t.via];
 const terminado = t => t.paso >= pasosDe(t).length;
 
+function buscar(q) {
+  const words = norm(q).split(/[^a-z0-9]+/).filter(w => w.length > 2 && !PALABRAS_VACIAS.includes(w));
+  return CATALOGO.filter(c => c.claves.some(k => words.some(w => k.startsWith(w) || w.startsWith(k))));
+}
+
 function estado(t) {
+  if (t.cancelado) return { txt: 'Desistido', cls: 'b-warn' };
   if (terminado(t)) return { txt: t.via === 'Vía automática' ? 'Listo' : 'Resuelto', cls: 'b-ok' };
+  if (t.faltaDoc) return { txt: 'Falta un documento', cls: 'b-warn' };
   return { txt: pasosDe(t)[t.paso], cls: 'b-prog' };
+}
+
+function registrar(capa, txt) {
+  state.log.unshift({ capa, txt });
+  state.log.length = Math.min(state.log.length, 7);
+  pintarLateral();
+}
+
+function avisar(txt, tramiteId) {
+  state.avisos.unshift({ txt, tramite: tramiteId, leido: false });
+  registrar('soa', `Avisos y mensajería: «${txt}» enviado a la app y por correo.`);
+}
+
+function pintarLateral() {
+  const valoradas = state.tramites.filter(t => t.valoracion !== null);
+  const media = valoradas.length ? (valoradas.reduce((s, t) => s + t.valoracion, 0) / valoradas.length).toLocaleString('es-ES', { maximumFractionDigits: 1 }) : '–';
+  $('kpis').innerHTML = [
+    [state.reutilizados, 'datos reutilizados del expediente'],
+    [state.tecleados, 'campos que has tenido que teclear'],
+    [0, 'transferencias entre unidades'],
+    [media, 'valoración media (de 1 a 5)']
+  ].map(([v, l]) => `<div class="kpi"><b>${v}</b><span>${l}</span></div>`).join('');
+  $('log').innerHTML = state.log.map(e => `<li><span class="capa ${e.capa}">${CAPAS[e.capa]}</span><span>${esc(e.txt)}</span></li>`).join('');
+  const n = state.avisos.filter(a => !a.leido).length;
+  tabAvisos.innerHTML = `Avisos${n ? `<span class="n">${n}</span>` : ''}`;
+  tabAvisos.setAttribute('aria-label', n ? `Avisos, ${n} sin leer` : 'Avisos');
+  const raiz = current ? (TABS.includes(current.name) ? current.name : nav.length ? (TABS.find(x => x === nav[0].name) || 'inicio') : 'inicio') : 'inicio';
+  document.querySelectorAll('[data-tab]').forEach(b => {
+    if (b.dataset.tab === raiz) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+  });
 }
 
 let toastTimer;
@@ -216,20 +328,25 @@ function go(name, arg = null, mode = 'push') {
   current = { name, arg };
   backBtn.hidden = nav.length === 0;
   screens[name](arg);
+  pintarLateral();
   screenEl.scrollTop = 0;
   screenEl.focus({ preventScroll: true });
 }
+const repintar = () => go(current.name, current.arg, 'replace');
+
 backBtn.addEventListener('click', () => {
   const prev = nav.pop();
   if (!prev) return;
   current = null;
   go(prev.name, prev.arg, 'replace');
 });
+document.querySelectorAll('[data-tab]').forEach(b => b.addEventListener('click', () => go(b.dataset.tab, null, 'root')));
 $('reset').addEventListener('click', () => { reset(); toast('Demo reiniciada'); });
+$('day').addEventListener('click', simularDia);
 
 function setHeader(title, principle) {
   titleEl.textContent = title;
-  principleEl.textContent = principle;
+  principleEl.textContent = `Principio en esta pantalla: ${principle}`;
 }
 
 const screens = {
@@ -237,7 +354,7 @@ const screens = {
     setHeader('Secretaría 360', 'Diseñar «de fuera hacia dentro» (L2)');
     const lista = state.tramites.map(t => {
       const e = estado(t);
-      const extra = t.sinLeer ? `<span class="dot">${t.sinLeer} mensaje nuevo de ${GESTORA.nombre}</span>`
+      const extra = t.sinLeer ? `<span class="dot">${t.sinLeer} ${t.sinLeer === 1 ? 'mensaje nuevo' : 'mensajes nuevos'} de ${GESTORA.nombre}</span>`
         : terminado(t) && t.valoracion === null && t.via !== 'Vía automática' ? '<span class="dot">Valora cómo ha ido</span>' : '';
       return `<button class="card tap" type="button" data-open="${t.id}">
           <div class="row"><strong>${esc(t.nombre)}</strong><span class="badge ${e.cls}">${esc(e.txt)}</span></div>
@@ -252,6 +369,7 @@ const screens = {
         <button type="submit">Buscar</button>
       </form>
       <p class="hint" id="hint" hidden>Escribe qué necesitas, por ejemplo «convalidar una asignatura».</p>
+      <ul class="sugs" id="sugs" hidden></ul>
       <div class="chips">
         <button class="chip" type="button" data-q="certificado para la beca">Certificado para la beca</button>
         <button class="chip" type="button" data-q="convalidar Erasmus">Convalidar Erasmus</button>
@@ -265,14 +383,21 @@ const screens = {
       if (!q) { $('hint').hidden = false; $('q').focus(); return; }
       go('resultados', q);
     });
+    $('q').addEventListener('input', () => {
+      const res = buscar($('q').value);
+      $('hint').hidden = true;
+      $('sugs').hidden = !res.length;
+      $('sugs').innerHTML = res.map(c => `<li><button type="button" data-t="${c.tipo}">${esc(c.nombre)} <span class="muted">· ${esc(c.via)}</span></button></li>`).join('');
+      $('sugs').querySelectorAll('[data-t]').forEach(b => b.addEventListener('click', () => go('formulario', b.dataset.t)));
+    });
     screenEl.querySelectorAll('.chip').forEach(b => b.addEventListener('click', () => go('resultados', b.dataset.q)));
     screenEl.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => go('seguimiento', Number(b.dataset.open))));
   },
 
   resultados(q) {
     setHeader('Te proponemos', 'Versiones del proceso según la demanda (L2)');
-    const words = norm(q).split(/[^a-z0-9]+/).filter(w => w.length > 2 && !PALABRAS_VACIAS.includes(w));
-    const res = CATALOGO.filter(c => c.claves.some(k => words.some(w => k.startsWith(w) || w.startsWith(k))));
+    const res = buscar(q);
+    registrar('soa', `Catálogo de trámites: «${q}» → ${res.length ? res.map(c => c.nombre).join(', ') : 'sin coincidencias'}.`);
     const tarjeta = c => `
       <button class="card tap" type="button" data-t="${c.tipo}">
         <div class="row"><strong>${esc(c.nombre)}</strong><span class="badge ${c.via === 'Vía automática' ? 'b-ok' : c.via === 'Vía experta' ? 'b-warn' : 'b-prog'}">${esc(c.via)}</span></div>
@@ -287,19 +412,24 @@ const screens = {
   formulario(tipo) {
     const c = CATALOGO.find(x => x.tipo === tipo);
     setHeader(c.nombre, 'Buscar, seleccionar y confirmar en vez de teclear (L2)');
-    const conocidos = [['Nombre', 'Lucía Martín Ruiz'], ['Documento de identidad', '•••• 4821 X'], ['Titulación', 'Grado en Administración de Empresas'], ['Curso', '2.º · 2026-27']];
+    state.reutilizados += DATOS_EXPEDIENTE.length;
+    state.usos.unshift({ quien: `Secretaría 360 · ${c.nombre.toLowerCase()}`, para: 'Rellenar tu solicitud con los datos que ya tenemos', cuando: `${fechaEn(state.dia)} (hoy)` });
+    registrar('soa', `Identidad + expediente: ${DATOS_EXPEDIENTE.length} datos recuperados; no hay que volver a escribirlos.`);
     const opciones = tipo === 'conv'
       ? ['Marketing Internacional (Univ. de Lyon)', 'Economía Europea (Univ. de Lyon)']
       : tipo === 'beca' ? ['Beca de matrícula', 'Ayuda de transporte'] : ['Solicitud de beca', 'Prácticas en empresa', 'Otro'];
     const etiqueta = tipo === 'conv' ? 'Asignatura a convalidar' : tipo === 'beca' ? 'Tipo de ayuda' : 'Para qué lo necesitas';
     screenEl.innerHTML = `
-      <div class="note">Ya tenemos ${conocidos.length} de tus datos. Solo revisa y elige lo que falta.</div>
-      ${conocidos.map(([k, v]) => `<div class="field"><span class="lbl">${k}</span><div class="val"><span>${esc(v)}</span><small>✓ de tu expediente</small></div></div>`).join('')}
+      <div class="note">Ya tenemos ${DATOS_EXPEDIENTE.length} de tus datos. Solo revisa y elige lo que falta.</div>
+      ${DATOS_EXPEDIENTE.map(([k, v]) => `<div class="field"><span class="lbl">${k}</span><div class="val"><span>${esc(v)}</span><small>✓ de tu expediente</small></div></div>`).join('')}
       <button class="link" type="button" id="fix">¿Algún dato no es correcto?</button>
       <div class="field" style="margin-top:10px"><label for="extra">${etiqueta}</label>
         <select id="extra">${opciones.map(o => `<option>${esc(o)}</option>`).join('')}</select></div>
       <button class="primary" type="button" id="next">${c.tasa ? 'Continuar al pago' : 'Enviar solicitud'}</button>`;
-    $('fix').addEventListener('click', () => toast('Hemos avisado a secretaría para corregirlo. Tu solicitud puede seguir adelante.'));
+    $('fix').addEventListener('click', () => {
+      registrar('back', 'Secretaría recibe un aviso para revisar los datos del expediente.');
+      toast('Hemos avisado a secretaría para corregirlo. Tu solicitud puede seguir adelante.');
+    });
     $('next').addEventListener('click', () => {
       const detalle = $('extra').value;
       if (c.tasa) go('pago', { tipo, detalle });
@@ -329,7 +459,7 @@ const screens = {
         <button class="primary" type="button" id="dl">Descargar PDF</button>
         ${valoracionHTML(t)}
         <button class="secondary" type="button" id="home">Volver al inicio</button>`;
-      $('dl').addEventListener('click', e => { e.currentTarget.textContent = 'Descargado ✓ (simulado)'; e.currentTarget.disabled = true; });
+      activarDescarga();
     } else {
       screenEl.innerHTML = `
         <h2>Solicitud enviada</h2>
@@ -345,39 +475,60 @@ const screens = {
   seguimiento(id) {
     const t = tramite(id);
     setHeader('Seguimiento', t.via === 'Vía automática' ? 'Vía automática para lo rutinario (L2)' : 'Un solo responsable de principio a fin (L2)');
-    const pasos = pasosDe(t);
-    const lis = pasos.map((p, i) => {
+    const lis = pasosDe(t).map((p, i) => {
       const cls = i < t.paso ? 'done' : i === t.paso ? 'now' : '';
-      const fecha = i === t.paso ? '<div class="muted">Fecha estimada: 22 de octubre</div>' : '';
+      const fecha = i === t.paso && !t.cancelado ? `<div class="muted">${t.faltaDoc ? 'En pausa hasta recibir la guía docente' : t.fechaDias !== undefined ? `Resolución prevista: ${fechaEn(t.fechaDias)}` : ''}</div>` : '';
       return `<li class="${cls}"><strong>${esc(p)}</strong>${fecha}</li>`;
     }).join('');
-    let persona = '';
+    let persona;
     if (t.gestora) {
       persona = `
         <div class="card person"><div class="avatar" aria-hidden="true">${GESTORA.inicial}</div><div><strong>${GESTORA.nombre}</strong><div class="muted">Tu gestora de caso · responde en el día</div></div></div>
+        ${t.faltaDoc ? '<div class="note warn">Falta la guía docente. Adjúntala en el chat para que tu caso siga adelante.</div>' : ''}
         ${t.cita ? `<div class="note info">Cita reservada: ${esc(t.cita)}</div>` : ''}
-        <button class="primary" type="button" id="chat">Escribir a ${GESTORA.nombre.split(' ')[0]}${t.sinLeer ? ` (${t.sinLeer} nuevo)` : ''}</button>
+        <button class="primary" type="button" id="chat">Escribir a ${GESTORA.nombre.split(' ')[0]}${t.sinLeer ? ` (${t.sinLeer} ${t.sinLeer === 1 ? 'nuevo' : 'nuevos'})` : ''}</button>
         ${t.via === 'Vía experta' && !terminado(t) ? `<button class="secondary" type="button" id="cita">${t.cita ? 'Cambiar la cita' : 'Pedir cita (presencial o vídeo)'}</button>` : ''}`;
     } else if (!terminado(t)) {
-      persona = '<div class="note info">Hoy te asignaremos una persona responsable. Desde ese momento podrás escribirle y, si hace falta, pedir cita.</div>';
+      persona = '<div class="note info">Hoy te asignaremos una persona responsable. Desde ese momento podrás escribirle y, si hace falta, pedir cita. Prueba «Simular un día».</div>';
     } else {
       persona = '<button class="primary" type="button" id="dl">Descargar PDF</button>';
     }
+    if (terminado(t) && t.gestora && t.via === 'Vía experta') persona = '<button class="primary" type="button" id="dl">Descargar resolución (PDF)</button>' + persona.replace('class="primary"', 'class="secondary"');
+    const puedeDesistir = !t.cancelado && !terminado(t) && t.via !== 'Vía automática';
+    if (t.cancelado) persona = `<div class="note warn">Has desistido de esta solicitud el ${esc(t.cancelado)}. ${t.tasaPagada ? `Te devolveremos ${eur(t.tasaPagada)} en la misma tarjeta.` : ''}</div>`;
     screenEl.innerHTML = `
       <p class="muted">${esc(t.via)}${t.detalle ? ' · ' + esc(t.detalle) : ''}</p>
       <h2>${esc(t.nombre)}</h2>
       <ol class="steps">${lis}</ol>
       ${persona}
-      ${terminado(t) ? valoracionHTML(t) : ''}`;
+      ${terminado(t) && !t.cancelado ? valoracionHTML(t) : ''}
+      ${puedeDesistir ? '<button class="danger" type="button" id="desistir">Desistir de la solicitud</button><div id="conf"></div>' : ''}`;
     if ($('chat')) $('chat').addEventListener('click', () => go('chat', id));
     if ($('cita')) $('cita').addEventListener('click', () => go('cita', id));
-    if ($('dl')) $('dl').addEventListener('click', e => { e.currentTarget.textContent = 'Descargado ✓ (simulado)'; e.currentTarget.disabled = true; });
+    if ($('desistir')) $('desistir').addEventListener('click', () => {
+      $('conf').innerHTML = `<div class="confirm" role="alertdialog" aria-label="Confirmar desistimiento">¿Seguro que quieres desistir? La solicitud se cerrará${t.tasaPagada ? ` y te devolveremos ${eur(t.tasaPagada)}` : ''}.
+        <div class="row"><button type="button" class="yes" id="si">Sí, desistir</button><button type="button" id="no">No, seguir</button></div></div>`;
+      $('no').addEventListener('click', () => { $('conf').innerHTML = ''; $('desistir').focus(); });
+      $('si').addEventListener('click', () => {
+        t.cancelado = fechaEn(state.dia);
+        t.sinLeer = 0;
+        registrar('back', `${t.gestora ? GESTORA.nombre : 'Secretaría'} cierra «${t.nombre}» por desistimiento.`);
+        if (t.tasaPagada) registrar('soa', `Pagos: devolución de ${eur(t.tasaPagada)} iniciada automáticamente.`);
+        repintar();
+        toast('Solicitud cerrada.');
+      });
+      $('si').focus();
+    });
+    activarDescarga();
     activarValoracion(t);
   },
 
   chat(id) {
     const t = tramite(id);
-    t.sinLeer = 0;
+    if (t.sinLeer) {
+      t.sinLeer = 0;
+      state.avisos.forEach(a => { if (a.tramite === id) a.leido = true; });
+    }
     setHeader(`${GESTORA.nombre} · gestora`, 'Personal con capacidad de decidir (L2)');
     screenEl.innerHTML = `
       <p class="muted">${esc(t.nombre)}</p>
@@ -390,14 +541,18 @@ const screens = {
       </form>`;
     const responder = text => setTimeout(() => {
       t.msgs.push({ who: 'them', text });
-      if (current && current.name === 'chat' && current.arg === id) go('chat', id, 'replace');
+      if (current && current.name === 'chat' && current.arg === id) repintar();
+      else { t.sinLeer++; pintarLateral(); }
     }, 700);
     $('att').addEventListener('click', () => $('file').click());
     $('file').addEventListener('change', e => {
       const f = e.target.files[0];
       if (!f) return;
       t.msgs.push({ who: 'me', text: `Documento adjunto: ${f.name}`, file: true });
-      go('chat', id, 'replace');
+      t.faltaDoc = false;
+      registrar('soa', `Firma y documentos: «${f.name}» guardado en el expediente del trámite.`);
+      registrar('back', `${GESTORA.nombre} recibe el documento; el caso sale de pausa.`);
+      repintar();
       responder('Recibido, gracias. Con esto ya puedo revisar tu caso.');
     });
     $('c').addEventListener('submit', e => {
@@ -405,7 +560,8 @@ const screens = {
       const v = $('m').value.trim();
       if (!v) return;
       t.msgs.push({ who: 'me', text: v });
-      go('chat', id, 'replace');
+      registrar('back', `${GESTORA.nombre} recibe tu mensaje directamente, sin pasar por otras unidades.`);
+      repintar();
       responder('Recibido. Lo miro hoy y te contesto por aquí.');
     });
     $('m').focus();
@@ -424,6 +580,7 @@ const screens = {
       screenEl.querySelectorAll('[data-s]').forEach(b => b.addEventListener('click', () => { elegido = b.dataset.s; pintar(); }));
       $('ok').addEventListener('click', () => {
         t.cita = elegido;
+        registrar('back', `Agenda de ${GESTORA.nombre}: cita reservada (${elegido}).`);
         nav.pop();
         current = null;
         go('seguimiento', id, 'replace');
@@ -431,6 +588,52 @@ const screens = {
       });
     };
     pintar();
+  },
+
+  documentos() {
+    setHeader('Mis documentos', 'Datos y documentos reutilizables (L2 y L3)');
+    screenEl.innerHTML = `
+      <p class="muted">Todo lo que la universidad te ha emitido, en un solo sitio y siempre firmado.</p>
+      ${state.documentos.map((d, i) => `
+        <div class="card"><div class="row"><div><strong>${esc(d.nombre)}</strong><div class="muted">Emitido el ${esc(d.fecha)}</div></div>
+        <button class="link" type="button" data-d="${i}">Descargar</button></div></div>`).join('')}`;
+    screenEl.querySelectorAll('[data-d]').forEach(b => b.addEventListener('click', () => {
+      b.textContent = 'Descargado ✓';
+      b.disabled = true;
+      registrar('soa', `Firma y documentos: «${state.documentos[Number(b.dataset.d)].nombre}» descargado.`);
+    }));
+  },
+
+  perfil() {
+    setHeader('Perfil', 'Transparencia en el uso de los datos (reflexión del grupo)');
+    screenEl.innerHTML = `
+      <h3 style="margin-top:0">Tus datos del expediente</h3>
+      ${DATOS_EXPEDIENTE.map(([k, v]) => `<div class="field"><span class="lbl">${k}</span><div class="val"><span>${esc(v)}</span></div></div>`).join('')}
+      <h3>Cómo quieres recibir los avisos</h3>
+      ${[['app', 'En la app'], ['correo', 'Por correo electrónico'], ['sms', 'Por SMS']].map(([k, l]) => `
+        <label class="toggle" for="p-${k}"><span>${l}</span><input type="checkbox" id="p-${k}" data-p="${k}" ${state.prefs[k] ? 'checked' : ''}></label>`).join('')}
+      <h3>Uso de tus datos</h3>
+      <p class="muted">Solo la persona que lleva tu trámite puede ver tu expediente. Aquí ves cada vez que alguien lo ha consultado y para qué.</p>
+      ${state.usos.map(u => `<div class="uso"><strong>${esc(u.quien)}</strong><div class="muted">${esc(u.para)} · ${esc(u.cuando)}</div></div>`).join('')}`;
+    screenEl.querySelectorAll('[data-p]').forEach(cb => cb.addEventListener('change', () => {
+      state.prefs[cb.dataset.p] = cb.checked;
+      const canales = Object.entries(state.prefs).filter(([, v]) => v).map(([k]) => ({ app: 'app', correo: 'correo', sms: 'SMS' }[k]));
+      registrar('soa', `Avisos y mensajería: canales activos → ${canales.length ? canales.join(', ') : 'ninguno'}.`);
+      toast(canales.length ? `Recibirás los avisos por: ${canales.join(', ')}.` : 'No recibirás avisos fuera de la app. Revisa esta pestaña de vez en cuando.');
+    }));
+  },
+
+  avisos() {
+    setHeader('Avisos', 'Hacer visible el back stage (L1)');
+    const html = state.avisos.length
+      ? state.avisos.map((a, i) => `<button class="aviso${a.leido ? '' : ' nuevo'}" type="button" data-a="${i}"><strong>${esc(a.txt)}</strong></button>`).join('')
+      : '<p class="muted">No tienes avisos.</p>';
+    screenEl.innerHTML = `<p class="muted">Cada cambio de estado de tus trámites aparece aquí y te llega por correo.</p>${html}`;
+    screenEl.querySelectorAll('[data-a]').forEach(b => b.addEventListener('click', () => {
+      const a = state.avisos[Number(b.dataset.a)];
+      a.leido = true;
+      if (a.tramite) go('seguimiento', a.tramite); else repintar();
+    }));
   }
 };
 
@@ -438,24 +641,80 @@ function crearTramite(tipo, detalle) {
   const c = CATALOGO.find(x => x.tipo === tipo);
   const auto = c.via === 'Vía automática';
   const t = {
-    id: nextId++, tipo, detalle, nombre: c.nombre, via: c.via,
-    paso: auto ? PASOS[c.via].length : 1, gestora: false, cita: null, valoracion: null, sinLeer: 0, msgs: []
+    id: state.nextId++, tipo, detalle, nombre: c.nombre, via: c.via,
+    paso: auto ? PASOS[c.via].length : 1, gestora: false, cita: null, valoracion: null, sinLeer: 0, faltaDoc: false, msgs: [],
+    tasaPagada: c.tasa, fechaDias: auto ? undefined : state.dia + PLAZO_DIAS[c.via]
   };
   state.tramites.unshift(t);
+  if (c.tasa) registrar('soa', `Pagos: ${eur(c.tasa)} cobrados y vinculados al trámite; no hace falta justificante.`);
+  if (auto) {
+    state.documentos.unshift({ nombre: `${c.nombre} (${detalle.toLowerCase()})`, fecha: fechaEn(state.dia) });
+    registrar('soa', 'Firma y documentos: certificado generado y firmado al momento.');
+    registrar('back', 'Nadie tiene que intervenir: la vía automática no ocupa tiempo del personal.');
+  } else {
+    registrar('back', `Solicitud enviada por la ${c.via.toLowerCase()}; pendiente de asignar gestor/a.`);
+  }
   // Tras enviar no se puede volver al formulario ni al pago: evita pagar dos veces.
   nav = [{ name: 'inicio', arg: null }];
   current = null;
   go('hecho', t.id, 'replace');
 }
 
+function simularDia() {
+  state.dia++;
+  let cambios = 0;
+  state.tramites.forEach(t => {
+    if (terminado(t) || t.cancelado) return;
+    cambios++;
+    if (!t.gestora) {
+      t.gestora = true;
+      t.paso = 2;
+      t.msgs.push({ who: 'them', text: `Hola, Lucía. Soy ${GESTORA.nombre.split(' ')[0]} y llevaré tu solicitud hasta el final. Ya estoy revisándola.` });
+      t.sinLeer++;
+      registrar('back', `${GESTORA.nombre} asignada a «${t.nombre}» como única responsable.`);
+      avisar(`${GESTORA.nombre} llevará tu ${t.nombre.toLowerCase()}.`, t.id);
+      return;
+    }
+    if (t.faltaDoc) {
+      t.msgs.push({ who: 'them', text: 'Sigo esperando la guía docente para poder avanzar. Puedes adjuntarla aquí mismo.' });
+      t.sinLeer++;
+      registrar('back', `${GESTORA.nombre} no puede avanzar sin la guía docente y te lo recuerda.`);
+      avisar('Falta la guía docente de tu convalidación.', t.id);
+      return;
+    }
+    t.paso++;
+    if (terminado(t)) {
+      state.documentos.unshift({ nombre: `Resolución: ${t.nombre.toLowerCase()}`, fecha: fechaEn(state.dia) });
+      registrar('soa', 'Firma y documentos: resolución firmada y guardada en «Documentos».');
+      registrar('back', `${GESTORA.nombre} cierra «${t.nombre}» y pide tu valoración.`);
+      avisar(`Tu ${t.nombre.toLowerCase()} está resuelta. Valora cómo ha ido.`, t.id);
+    } else {
+      registrar('back', `«${t.nombre}» pasa a «${pasosDe(t)[t.paso]}».`);
+      avisar(`Tu ${t.nombre.toLowerCase()} ha pasado a «${pasosDe(t)[t.paso]}».`, t.id);
+    }
+  });
+  if (!cambios) registrar('back', 'No hay trámites pendientes: nada que avanzar.');
+  repintar();
+  toast(cambios ? `Ha pasado un día: ${cambios} ${cambios === 1 ? 'trámite ha cambiado' : 'trámites han cambiado'}.` : 'Ha pasado un día. No tienes trámites pendientes.');
+}
+
+function activarDescarga() {
+  const b = $('dl');
+  if (b) b.addEventListener('click', () => {
+    b.textContent = 'Descargado ✓ (simulado)';
+    b.disabled = true;
+    registrar('soa', 'Firma y documentos: PDF firmado entregado al estudiante.');
+  });
+}
+
 function valoracionHTML(t) {
-  if (t.valoracion !== null) return '<p class="muted" style="margin-top:14px">Gracias por tu valoración.</p>';
+  if (t.valoracion !== null) return `<p class="muted" style="margin-top:14px">Gracias por tu valoración (${t.valoracion} de 5).</p>`;
   return `
     <div style="margin-top:16px">
       <p style="margin:0"><strong>¿Cómo ha ido el trámite?</strong></p>
       <p class="muted" style="margin:0">Una sola pregunta. De 1 (muy mal) a 5 (muy bien).</p>
       <div class="stars" role="group" aria-label="Valoración del trámite">
-        ${[1, 2, 3, 4, 5].map(n => `<button type="button" data-v="${n}" aria-pressed="false" aria-label="${n} de 5">${n}</button>`).join('')}
+        ${[1, 2, 3, 4, 5].map(n => `<button type="button" data-v="${n}" aria-label="${n} de 5">${n}</button>`).join('')}
       </div>
     </div>`;
 }
@@ -463,7 +722,8 @@ function valoracionHTML(t) {
 function activarValoracion(t) {
   screenEl.querySelectorAll('[data-v]').forEach(b => b.addEventListener('click', () => {
     t.valoracion = Number(b.dataset.v);
-    go(current.name, current.arg, 'replace');
+    registrar('back', `Valoración de ${t.valoracion}/5 registrada para mejorar el servicio.`);
+    repintar();
     toast('Gracias. Tu valoración nos ayuda a mejorar el servicio.');
   }));
 }
